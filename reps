@@ -1,0 +1,23 @@
+#!/bin/sh
+
+
+# Remotely execute ps on multiple hosts
+#
+# Usage: ./reps procname
+#
+# Author: Wasif Malik
+#         wmalik@gmail.com
+# Date:   2013-05-26
+
+
+# filename that holds the host strings (user@hostname) separated by newlines.
+# Password-less SSH authentication required
+HOSTS_FILE=hosts.conf
+
+# execute ps on all hosts and pretty print the output
+for host in `grep -v "#" $HOSTS_FILE`; do
+    pretty=`ssh $host "ps auxwww | grep $1" \
+        |  awk -v _host="$host" \
+           '{ print "\033[0;31m"_host, "\033[0m"$0 }'`
+    echo "\033[0m$pretty"
+done
